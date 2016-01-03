@@ -5,9 +5,9 @@ Lambda calculus framework for Swift supporting intensional equality
 let truth   = Lambda { t in Lambda { f in t } }
 let falsity = Lambda { t in Lambda { f in f } }
 
-let and = Lambda { a in Lambda { b in a[b][a] } }
-let or  = Lambda { a in Lambda { b in a[a][b] } }
-let not = Lambda { x in x[f][t] }
+let and = Lambda { a in Lambda { b in a[b][falsity] } }
+let or  = Lambda { a in Lambda { b in a[truth][b] } }
+let not = Lambda { x in x[falsity][truth] }
 
 print(and[truth][falsity] == falsity) // true
 print(or[truth][falsity] == truth)    // true
