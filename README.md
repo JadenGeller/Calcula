@@ -7,7 +7,11 @@ In [lambda calculus](https://en.wikipedia.org/wiki/Lambda_calculus), values are 
 let truth   = Lambda { t in Lambda { f in t } }
 let falsity = Lambda { t in Lambda { f in f } }
 ```
-We didn't just arbitrarily choose these definitions though! Note that `truth` is a function that takes two arguments and always returns the first, and that `falsity` is a function that takes two arguments and always returns the second. Thus, we can easily write a function `not` that will return `falsity` given `truth` and will return `truth` given `falsity`.
+We didn't just arbitrarily choose these definitions though! Note that `truth` is a function that takes two arguments and always returns the first, and that `falsity` is a function that takes two arguments and always returns the second.
+
+Also, notice that the arguments are [curried](https://en.wikipedia.org/wiki/Currying), that is, every function actually only takes a single argument, but we can simulate multi-argument functions by writing a function that takes an argument, and returns a function that takes the second argument (which is exactly what we did).
+
+We can easily write a function `not` that will return `falsity` given `truth` and will return `truth` given `falsity`.
 ```swift
 let not = Lambda { condition in condition[falsity][truth] }
 ```
