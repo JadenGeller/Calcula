@@ -6,7 +6,7 @@
 //  Copyright © 2015 Jaden Geller. All rights reserved.
 //
 
-enum Term {
+public enum Term {
     case Variable(Identifier)
     indirect case Capture(argument: Identifier, captured: Term)
     indirect case Application(Term, Term)

@@ -6,16 +6,16 @@
 //  Copyright © 2015 Jaden Geller. All rights reserved.
 //
 
-class Identifier {
-    init() {}
+public class Identifier {
+    internal init() {}
 }
 
 extension Identifier: Hashable {
-    var hashValue: Int {
+    public var hashValue: Int {
         return ObjectIdentifier(self).hashValue
     }
 }
-func ==(lhs: Identifier, rhs: Identifier) -> Bool {
+public func ==(lhs: Identifier, rhs: Identifier) -> Bool {
     return lhs === rhs
 }
 

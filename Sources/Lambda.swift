@@ -6,23 +6,23 @@
 //  Copyright © 2015 Jaden Geller. All rights reserved.
 //
 
-struct Lambda {
-    let backing: Term
+public struct Lambda {
+    internal let backing: Term
     
-    init<T: TermConvertible>(@noescape _ implementation: Identifier -> T) {
+    public init<T: TermConvertible>(@noescape _ implementation: Identifier -> T) {
         let identifier = Identifier()
         self.backing = .Capture(argument: identifier, captured: implementation(identifier).termValue)
     }
     
-    init(backing: Term) {
+    internal init(backing: Term) {
         self.backing = backing
     }
 }
 
 extension Lambda: CustomStringConvertible {
-    var description: String {
+    public var description: String {
         var state = [-1]
-        var generator = anyGenerator { () -> String? in
+        var nameGenerator = anyGenerator { () -> String? in
             // increment state
             state[0] += 1
             
@@ -37,12 +37,12 @@ extension Lambda: CustomStringConvertible {
             
             return String(state.map{ Character(UnicodeScalar(97 + $0)) })
         }
-        return backing.prettyDescription(nameGenerator: &generator)
+        return backing.prettyDescription(nameGenerator: &nameGenerator)
     }
 }
 
 extension Lambda: Equatable {}
-func ==(lhs: Lambda, rhs: Lambda) -> Bool {
+public func ==(lhs: Lambda, rhs: Lambda) -> Bool {
     return lhs.backing.unreducedIsEqual(rhs.backing)
 }
 
