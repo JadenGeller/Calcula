@@ -35,8 +35,8 @@ let makePair  = Lambda { first in Lambda { second in Lambda { selector in select
 let getFirst  = Lambda { pair in pair[truth] }
 let getSecond = Lambda { pair in pair[falsity] }
 
-print(getFirst[makePair[truth][falsity]] == truth)    // true
-print(getSecond[makePair[truth][falsity]] == falsity) // true
+print(getFirst[makePair[truth][falsity]] == truth)    // -> true
+print(getSecond[makePair[truth][falsity]] == falsity) // -> true
 ```
 In the definition of `pair`, we apply some unknown `selector` function to `first` and `second` so we can later retrieve the desired argument by choice of a `selector` function. Recall that `truth` and `falsity` both expect two arguments, but `truth` returns the first argument it receives while `falsity` returns the second argument it receives. Thus, if we pass the selector `truth`, we can retrive the first element of our pair and if we pass the selector `falsity`, we can retrive the second element of our pair.
 
