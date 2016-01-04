@@ -1,12 +1,13 @@
 # Calcula
-Lambda calculus framework for Swift supporting intensional equality
 
-Here's an example defining two function *values*, one representing true and one representing false. (Note that different names had to be chosen to prevent conflicts with Swift's existing boolean naming.) In [lambda calculus](https://en.wikipedia.org/wiki/Lambda_calculus), values are represented by functions. A function with the exact same *shape* as our `truth` function is what we call intensionally equal to our `truth` function. Thus, we represent true and false values with functions of a particular shape.
+Calcula provides a `Lambda` type for defining, comparing, and printing lambda calculus functions.
+
+In [lambda calculus](https://en.wikipedia.org/wiki/Lambda_calculus), values are represented by functions. Here's an example defining two function *values*, one representing true and one representing false. It's [too hard](https://en.wikipedia.org/wiki/Halting_problem) to tell if two functions actually do the same thing, so we define equality based on shape. A function with the exact same *shape* as our `truth` function is what we call intensionally equal to our `truth` function. Thus, we can represent the values true and false with functions of a particular shape.
 ```swift
 let truth   = Lambda { t in Lambda { f in t } }
 let falsity = Lambda { t in Lambda { f in f } }
 ```
-Note that `truth` is a function that takes two arguments and always returns the first, and that `falsity` is a function that takes two arguments and always returns the second. Thus, we can easily write a function `not` that will return `falsity` given `truth` and will return `truth` given `falsity`.
+We didn't just arbitrarily choose these definitions though! Note that `truth` is a function that takes two arguments and always returns the first, and that `falsity` is a function that takes two arguments and always returns the second. Thus, we can easily write a function `not` that will return `falsity` given `truth` and will return `truth` given `falsity`.
 ```swift
 let not = Lambda { condition in condition[falsity][truth] }
 ```
