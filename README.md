@@ -2,7 +2,7 @@
 
 Calcula provides a `Lambda` type for defining, comparing, and printing lambda calculus functions.
 
-In [lambda calculus](https://en.wikipedia.org/wiki/Lambda_calculus), values are represented by functions. Here's an example defining two function *values*, one representing true and one representing false. It's [too hard](https://en.wikipedia.org/wiki/Halting_problem) to tell if two functions actually do the same thing, so we define equality based on shape. A function with the exact same *shape* as our `truth` function is what we call intensionally equal to our `truth` function. Thus, we can represent the values true and false with functions of a particular shape.
+In [lambda calculus](https://en.wikipedia.org/wiki/Lambda_calculus), values are represented by functions. Here's an example defining two function *values*, one representing true and one representing false. It's [too hard](https://en.wikipedia.org/wiki/Halting_problem) to tell if two functions actually do the same thing, so we define equality based on shape. A function with the exact same *shape* as our `truth` function is what we call [intensionally equal](https://en.wikipedia.org/wiki/Extensionality) to our `truth` function. Thus, we can represent the values true and false with functions of a particular shape.
 ```swift
 let truth   = Lambda { t in Lambda { f in t } }
 let falsity = Lambda { t in Lambda { f in f } }
