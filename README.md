@@ -24,7 +24,7 @@ let or  = Lambda { condition1 in Lambda { condition2 in condition1[truth][condit
 ```
 
 We can easily check whether our functions work since Calcula supports checking intensional equality with the `==` operator.
-```
+```swift
 print(and[truth][falsity] == falsity) // -> true
 print(or[truth][falsity] == truth)    // -> true
 ```
