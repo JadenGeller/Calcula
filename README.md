@@ -31,13 +31,13 @@ print(or[truth][falsity] == truth)    // -> true
 
 Here's another example:
 ```swift
-let pair   = Lambda { left in Lambda { right in Lambda { selector in selector[left][right] } } }
-let first  = Lambda { pairing in pairing[truth] }
-let second = Lambda { pairing in pairing[falsity] }
+let makePair  = Lambda { first in Lambda { second in Lambda { selector in selector[first][second] } } }
+let getFirst  = Lambda { pair in pair[truth] }
+let getSecond = Lambda { pair in pair[falsity] }
 
-print(first[pair[truth][falsity]] == truth)    // true
-print(second[pair[truth][falsity]] == falsity) // true
+print(getFirst[makePair[truth][falsity]] == truth)    // true
+print(getSecond[makePair[truth][falsity]] == falsity) // true
 ```
-In the definition of `pair`, we apply `left` and `right` to an argument `selector` so we can later retrieve the desired argument by choice of a `selector` function. Recall that `truth` and `falsity` both expect two arguments, but `truth` returns the first argument it receives while `falsity` returns the second argument it receives. Thus, if we pass the selector `truth`, we can retrive the left element of our pair and if we pass the selector `falsity`, we can retrive the right element of our pair.
+In the definition of `pair`, we apply some unknown `selector` function to `first` and `second` so we can later retrieve the desired argument by choice of a `selector` function. Recall that `truth` and `falsity` both expect two arguments, but `truth` returns the first argument it receives while `falsity` returns the second argument it receives. Thus, if we pass the selector `truth`, we can retrive the first element of our pair and if we pass the selector `falsity`, we can retrive the second element of our pair.
 
 If you're like me and think this is all super cool, a great next step would be try to encode numbers using [Church numerals](https://en.wikipedia.org/wiki/Church_encoding#Church_numerals), and then write functions to add, subtract, and multiply them! Let [me](https://twitter.com/jadengeller) know if you have any questions! :)
