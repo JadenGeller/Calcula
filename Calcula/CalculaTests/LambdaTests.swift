@@ -62,54 +62,54 @@ class LambdaTests: XCTestCase {
         let (w, x, y) = (Binding(), Binding(), Binding())
         XCTAssertEqual(
             "λa.λb.b a",
-            Term.lambda(x, .lambda(y, .application(.variable(PureVariable(y)), .variable(PureVariable(x))))).description
+            Term.lambda(x, .lambda(y, .application(.variable(y), .variable(x)))).description
         )
         XCTAssertEqual(
             "a b c",
             Term.application(
-                Term.application(.variable(PureVariable(w)), .variable(PureVariable(x))),
-                .variable(PureVariable(y))
+                Term.application(.variable(w), .variable(x)),
+                .variable(y)
             ).description
         )
         XCTAssertEqual(
             "a(b c)",
             Term.application(
-                .variable(PureVariable(y)),
-                Term.application(.variable(PureVariable(w)), .variable(PureVariable(x)))
+                .variable(y),
+                Term.application(.variable(w), .variable(x))
             ).description
         )
         XCTAssertEqual(
             "λa.b c",
-            Term.lambda(w, Term.application(.variable(PureVariable(x)), .variable(PureVariable(y)))).description
+            Term.lambda(w, Term.application(.variable(x), .variable(y))).description
         )
     }
     
     func testSubstitution() {
         let (x, y, t, r) = (Binding(), Binding(), Binding(), Binding())
-        XCTAssert(unreducedEquals(
-            Term.variable(PureVariable(x)).substituting(x, with: .variable(PureVariable(r))),
-            Term.variable(PureVariable(r))
-        ))
-        XCTAssert(unreducedEquals(
-            Term.variable(PureVariable(y)).substituting(x, with: .variable(PureVariable(r))),
-            Term.variable(PureVariable(y))
-        ))
-        XCTAssert(unreducedEquals(
-            Term.lambda(x, .variable(PureVariable(t))).substituting(x, with: .variable(PureVariable(r))),
-            Term.lambda(x, .variable(PureVariable(t)))
-        ))
-        XCTAssert(unreducedEquals(
-            Term.lambda(x, .variable(PureVariable(x))).substituting(y, with: .variable(PureVariable(y))),
-            Term.lambda(x, .variable(PureVariable(x)))
-        ))
-        XCTAssert(unreducedEquals(
-            Term.application(.lambda(x, .variable(PureVariable(y))), .variable(PureVariable(x))).substituting(x, with: .variable(PureVariable(y))),
-            Term.application(.lambda(x, .variable(PureVariable(y))), .variable(PureVariable(y)))
-        ))
-        XCTAssertFalse(unreducedEquals(
-            Term.lambda(x, .variable(PureVariable(y))).substituting(y, with: .variable(PureVariable(x))),
-            Term.lambda(x, .variable(PureVariable(x)))
-        ))
+        XCTAssert(Term.unreducedEquals(
+            Term.variable(x).substituting(x, with: .variable(r)),
+            Term.variable(r)
+        ) == true)
+        XCTAssert(Term.unreducedEquals(
+            Term.variable(y).substituting(x, with: .variable(r)),
+            Term.variable(y)
+        ) == true)
+        XCTAssert(Term.unreducedEquals(
+            Term.lambda(x, .variable(t)).substituting(x, with: .variable(r)),
+            Term.lambda(x, .variable(t))
+        ) == true)
+        XCTAssert(Term.unreducedEquals(
+            Term.lambda(x, .variable(x)).substituting(y, with: .variable(y)),
+            Term.lambda(x, .variable(x))
+        ) == true)
+        XCTAssert(Term.unreducedEquals(
+            Term.application(.lambda(x, .variable(y)), .variable(x)).substituting(x, with: .variable(y)),
+            Term.application(.lambda(x, .variable(y)), .variable(y))
+        ) == true)
+        XCTAssert(Term.unreducedEquals(
+            Term.lambda(x, .variable(y)).substituting(y, with: .variable(x)),
+            Term.lambda(x, .variable(x))
+        ) == false)
     }
     
     func testEquality() {
@@ -126,9 +126,8 @@ class LambdaTests: XCTestCase {
     }
     
     func testTrueFalse() {
-        print((false as ImpureTerm)[impureValue: 0][impureValue: 1].reduced())
-        XCTAssertEqual(0, try! (true as ImpureTerm)[impureValue: 0][impureValue: 1].constantValue() as! Int)
-        XCTAssertEqual(1, try! (false as ImpureTerm)[impureValue: 0][impureValue: 1].constantValue() as! Int)
+        XCTAssertEqual(0, try! (true as Term)[impureValue: 0][impureValue: 1].constantValue() as! Int)
+        XCTAssertEqual(1, try! (false as Term)[impureValue: 0][impureValue: 1].constantValue() as! Int)
     }
     
     func testNot() {
@@ -174,7 +173,7 @@ class LambdaTests: XCTestCase {
     
     func testNumerals() {
         for i in 0...10 {
-            XCTAssertEqual(i, try! ImpureTerm(integerLiteral: i).integerValue())
+            XCTAssertEqual(i, try! Term(integerLiteral: i).integerValue())
         }
     }
     
@@ -197,7 +196,7 @@ class LambdaTests: XCTestCase {
                 
                 let zz = z.reduced()
                 let mm = m.reduced()
-                XCTAssert(unreducedEquals(zz, mm))
+                XCTAssert(Term.unreducedEquals(zz, mm) == true)
             }
         }
     }

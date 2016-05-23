@@ -12,7 +12,6 @@
 		4DD54FF51CA9F5F800C50946 /* LambdaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D6B17871C27F151006F8427 /* LambdaTests.swift */; };
 		4DD54FF61CA9F5F800C50946 /* TermTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DD54FD11CA9EAC700C50946 /* TermTests.swift */; };
 		4DEA72781CF19B6800F45A56 /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DEA72771CF19B6800F45A56 /* Binding.swift */; };
-		4DEA727F1CF1E80500F45A56 /* Variable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DEA727E1CF1E80500F45A56 /* Variable.swift */; };
 		4DEA72831CF22F8200F45A56 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DEA72821CF22F8200F45A56 /* Helpers.swift */; };
 /* End PBXBuildFile section */
 
@@ -35,7 +34,6 @@
 		4DD54FEA1CA9F5EA00C50946 /* CalculaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CalculaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DD54FEE1CA9F5EA00C50946 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4DEA72771CF19B6800F45A56 /* Binding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Binding.swift; sourceTree = "<group>"; };
-		4DEA727E1CF1E80500F45A56 /* Variable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Variable.swift; sourceTree = "<group>"; };
 		4DEA72821CF22F8200F45A56 /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -82,7 +80,6 @@
 				4DEA72771CF19B6800F45A56 /* Binding.swift */,
 				4D8DAEA41C3A336A00B212EC /* Term.swift */,
 				4DEA72821CF22F8200F45A56 /* Helpers.swift */,
-				4DEA727E1CF1E80500F45A56 /* Variable.swift */,
 				4D6B177D1C27F151006F8427 /* Info.plist */,
 			);
 			path = Calcula;
@@ -206,7 +203,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4DEA72781CF19B6800F45A56 /* Binding.swift in Sources */,
-				4DEA727F1CF1E80500F45A56 /* Variable.swift in Sources */,
 				4D8DAEA81C3A336A00B212EC /* Term.swift in Sources */,
 				4DEA72831CF22F8200F45A56 /* Helpers.swift in Sources */,
 			);

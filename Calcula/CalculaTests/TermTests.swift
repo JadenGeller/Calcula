@@ -16,7 +16,7 @@ class TermTests: XCTestCase {
         let free = Binding()
         XCTAssertEqual([free], Term.application(
             Lambda { x in x },
-            Term.variable(PureVariable(free))
+            Term.variable(free)
         ).freeVariables)
     }
     
@@ -24,44 +24,44 @@ class TermTests: XCTestCase {
         let (a, b, c) = (Binding(), Binding(), Binding())
         
         XCTAssert(
-            Term.variable(PureVariable(b)) ==
-            Term.variable(PureVariable(a)).substituting(a, with: Term.variable(PureVariable(b)))
+            Term.variable(b) ==
+            Term.variable(a).substituting(a, with: Term.variable(b))
         )
         XCTAssert(
-            Term.variable(PureVariable(a)) ==
-            Term.variable(PureVariable(a)).substituting(b, with: Term.variable(PureVariable(c)))
+            Term.variable(a) ==
+            Term.variable(a).substituting(b, with: Term.variable(c))
         )
         XCTAssert(
             Term.application(
-                Term.variable(PureVariable(c)),
-                Term.variable(PureVariable(b))
+                Term.variable(c),
+                Term.variable(b)
             ) ==
             Term.application(
-                Term.variable(PureVariable(a)),
-                Term.variable(PureVariable(b))
-            ).substituting(a, with: Term.variable(PureVariable(c)))
+                Term.variable(a),
+                Term.variable(b)
+            ).substituting(a, with: Term.variable(c))
         )
         XCTAssert(
             Term.application(
-                Term.variable(PureVariable(a)),
-                Term.variable(PureVariable(c))
+                Term.variable(a),
+                Term.variable(c)
             ) ==
             Term.application(
-                Term.variable(PureVariable(a)),
-                Term.variable(PureVariable(b))
-            ).substituting(b, with: Term.variable(PureVariable(c)))
+                Term.variable(a),
+                Term.variable(b)
+            ).substituting(b, with: Term.variable(c))
         )
         XCTAssert(
-            Term.lambda(a, Term.variable(PureVariable(a))) ==
-            Term.lambda(a, Term.variable(PureVariable(a))).substituting(a, with: Term.variable(PureVariable(b)))
+            Term.lambda(a, Term.variable(a)) ==
+            Term.lambda(a, Term.variable(a)).substituting(a, with: Term.variable(b))
         )
         XCTAssert(
-            Term.lambda(a, Term.variable(PureVariable(c))) ==
-            Term.lambda(a, Term.variable(PureVariable(b))).substituting(b, with: Term.variable(PureVariable(c)))
+            Term.lambda(a, Term.variable(c)) ==
+            Term.lambda(a, Term.variable(b)).substituting(b, with: Term.variable(c))
         )
         XCTAssert(
-            Term.lambda(a, Term.variable(PureVariable(a))) !=
-            Term.lambda(a, Term.variable(PureVariable(b))).substituting(b, with: Term.variable(PureVariable(a)))
+            Term.lambda(a, Term.variable(a)) !=
+            Term.lambda(a, Term.variable(b)).substituting(b, with: Term.variable(a))
         )
     }
 }

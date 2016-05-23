@@ -31,7 +31,7 @@ public func ==(lhs: Binding, rhs: Binding) -> Bool {
 
 extension Binding {
     /// Returns `true` iff `self` is not bound to any lambda argument within the term.
-    public func isFresh<Variable: VariableType>(in term: Term<Variable>) -> Bool {
+    public func isFresh(in term: Term) -> Bool {
         return !term.freeVariables.contains(self)
     }
 }
