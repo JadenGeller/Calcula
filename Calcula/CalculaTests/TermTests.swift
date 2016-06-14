@@ -11,11 +11,11 @@ import XCTest
 
 class TermTests: XCTestCase {
     func testFreeVariables() {
-        XCTAssertEqual([], Lambda { x in x }.freeVariables)
+        XCTAssertEqual([], lambda { x in x }.freeVariables)
         
         let free = Binding()
         XCTAssertEqual([free], Term.application(
-            Lambda { x in x },
+            lambda { x in x },
             Term.variable(free)
         ).freeVariables)
     }
@@ -23,45 +23,45 @@ class TermTests: XCTestCase {
     func testCaptureAvoidingSubstitutions() {
         let (a, b, c) = (Binding(), Binding(), Binding())
         
-        XCTAssert(
-            Term.variable(b) ==
+        XCTAssert(Term.structurallyEqual(
+            Term.variable(b),
             Term.variable(a).substituting(a, with: Term.variable(b))
-        )
-        XCTAssert(
-            Term.variable(a) ==
+        ) ?? false)
+        XCTAssert(Term.structurallyEqual(
+            Term.variable(a),
             Term.variable(a).substituting(b, with: Term.variable(c))
-        )
-        XCTAssert(
+        ) ?? false)
+        XCTAssert(Term.structurallyEqual(
             Term.application(
                 Term.variable(c),
                 Term.variable(b)
-            ) ==
+            ),
             Term.application(
                 Term.variable(a),
                 Term.variable(b)
             ).substituting(a, with: Term.variable(c))
-        )
-        XCTAssert(
+        ) ?? false)
+        XCTAssert(Term.structurallyEqual(
             Term.application(
                 Term.variable(a),
                 Term.variable(c)
-            ) ==
+            ),
             Term.application(
                 Term.variable(a),
                 Term.variable(b)
             ).substituting(b, with: Term.variable(c))
-        )
-        XCTAssert(
-            Term.lambda(a, Term.variable(a)) ==
+        ) ?? false)
+        XCTAssert(Term.structurallyEqual(
+            Term.lambda(a, Term.variable(a)),
             Term.lambda(a, Term.variable(a)).substituting(a, with: Term.variable(b))
-        )
-        XCTAssert(
-            Term.lambda(a, Term.variable(c)) ==
+        ) ?? false)
+        XCTAssert(Term.structurallyEqual(
+            Term.lambda(a, Term.variable(c)),
             Term.lambda(a, Term.variable(b)).substituting(b, with: Term.variable(c))
-        )
-        XCTAssert(
-            Term.lambda(a, Term.variable(a)) !=
+        ) ?? false)
+        XCTAssert(Term.structurallyEqual(
+            Term.lambda(a, Term.variable(a)),
             Term.lambda(a, Term.variable(b)).substituting(b, with: Term.variable(a))
-        )
+        ) == false)
     }
 }

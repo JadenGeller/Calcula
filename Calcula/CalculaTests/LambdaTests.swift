@@ -9,55 +9,52 @@
 import XCTest
 @testable import Calcula
 
-extension Term: BooleanLiteralConvertible {
-    public init(booleanLiteral value: Bool) {
-        self = Term { t in Term { f in value ? t : f } }
-    }
-}
-let and = Lambda { p in Lambda { q in p[q][p] } }
-let or = Lambda { p in Lambda { q in p[p][q] } }
-let not = Lambda { x in x[false][true] }
-let ifThenElse = Lambda { c in Lambda { t in Lambda { f in c[t][f] } } }
+let y = lambda { f in lambda { x in f[x[x]] }[lambda { x in f[x[x]] }] }
 
-extension Term: IntegerLiteralConvertible {
-    public init(integerLiteral value: Int) {
-        assert(value >= 0)
-        self = Term { z in
-            Term { s in
-                var result = z
-                for _ in 0..<value {
-                    result = s[result]
-                }
-                return result
-            }
-        }
-    }
-}
-extension Term {
-    public func integerValue() throws -> Int {
-        let succ: Any -> Any = { $0 as! Int + 1 }
-        return try self[impureValue: 0][impureFunction: succ].constantValue() as! Int
-    }
-}
+// MARK: Boolean Operators
 
-let succ = Lambda { a in Lambda { z in Lambda { s in s[a[z][s]] } } }
+let and = lambda { p in lambda { q in p[q][p] } }
+let or = lambda { p in lambda { q in p[p][q] } }
+let not = lambda { x in x[false][true] }
+let ifThenElse = lambda { c in lambda { t in lambda { f in c[t][f] } } }
 
-let pair   = Lambda { l in Lambda { r in Lambda { f in f[l][r] } } }
-let first  = Lambda { p in p[true] }
-let second = Lambda { p in p[false] }
+// MARK: Numeral Operators
 
-let some    = Lambda { x in pair[true][x] }
+let succ = lambda { x in lambda { s in lambda { z in s[x[s][z]] } } }
+let isZero = lambda { x in x[lambda { _ in false }][true] }
+//let fact = y[lambda { recurse in
+//    lambda { x in ifThenElse[isZero[x]][1][mult[x][fact[pred[x]]]] }
+//}]
+
+// MARK: Pair Operators
+
+let pair   = lambda { l in lambda { r in lambda { f in f[l][r] } } }
+let first  = lambda { p in p[true] }
+let second = lambda { p in p[false] }
+
+// MARK: Optional Operators
+
+let some    = lambda { x in pair[true][x] }
 let none    = pair[false][false]
-let isSome  = Lambda { p in first[p] }
-let unwrap  = Lambda { p in second[p] }
-let mapSome = Lambda { f in Lambda { p in ifThenElse[isSome[p]][some[f[unwrap[p]]]][none] } }
+let isSome  = lambda { p in first[p] }
+let unwrap  = lambda { p in second[p] }
+let mapSome = lambda { f in lambda { p in ifThenElse[isSome[p]][some[f[unwrap[p]]]][none] } }
+let flatMapSome = lambda { f in lambda { p in ifThenElse[isSome[p]][f[unwrap[p]]][none] } }
 
-let cons = Lambda { x in Lambda { xs in some[pair[x][xs]] } }
-let head = Lambda { l in mapSome[first] }
-let tail = Lambda { l in mapSome[second] }
+// MARK: List Operators
+
+let cons = lambda { x in lambda { xs in some[pair[x][xs]] } }
+let head = mapSome[first]
+let tail = flatMapSome[second]
+//let mapList = y[lambda { recurse in
+//    lambda { f in lambda { l in ifThenElse[isSome[l]][cons[f[unwrap[head[l]]]][recurse[tail[l]]]][none] } }
+//}]
+
+// MARK: Tests
 
 class LambdaTests: XCTestCase {
 
+    // TODO: Separation of tests into files doesn't make sense
     func testPrint() {
         let (w, x, y) = (Binding(), Binding(), Binding())
         XCTAssertEqual(
@@ -76,7 +73,7 @@ class LambdaTests: XCTestCase {
             Term.application(
                 .variable(y),
                 Term.application(.variable(w), .variable(x))
-            ).description
+                ).description
         )
         XCTAssertEqual(
             "λa.b c",
@@ -84,151 +81,162 @@ class LambdaTests: XCTestCase {
         )
     }
     
+    func testParse() {
+        let (a, b, c) = (Binding(), Binding(), Binding())
+        var bindings = ["a" : a, "b" : b, "c" : c]
+        XCTAssert(Term.structurallyEqual(
+            try! Term(parsing: "λa.λb.b a", withExistingBindings: &bindings),
+            Term.lambda(a, .lambda(b, .application(.variable(b), .variable(a))))
+        ) ?? false)
+        XCTAssert(Term.structurallyEqual(
+            try! Term(parsing: "a b c", withExistingBindings: &bindings),
+            Term.application(
+                Term.application(.variable(a), .variable(b)),
+                .variable(c)
+            )
+        ) ?? false)
+        XCTAssert(Term.structurallyEqual(
+            try! Term(parsing: "a(b c)", withExistingBindings: &bindings),
+            Term.application(
+                .variable(a),
+                Term.application(.variable(b), .variable(c))
+            )
+        ) ?? false)
+        XCTAssert(Term.structurallyEqual(
+            try! Term(parsing: "λa.b c", withExistingBindings: &bindings),
+            Term.lambda(a, Term.application(.variable(b), .variable(c)))
+        ) ?? false)
+    }
+    
     func testSubstitution() {
         let (x, y, t, r) = (Binding(), Binding(), Binding(), Binding())
-        XCTAssert(Term.unreducedEquals(
+        XCTAssert(Term.structurallyEqual(
             Term.variable(x).substituting(x, with: .variable(r)),
             Term.variable(r)
-        ) == true)
-        XCTAssert(Term.unreducedEquals(
+        ) ?? false)
+        XCTAssert(Term.structurallyEqual(
             Term.variable(y).substituting(x, with: .variable(r)),
             Term.variable(y)
-        ) == true)
-        XCTAssert(Term.unreducedEquals(
+        ) ?? false)
+        XCTAssert(Term.structurallyEqual(
             Term.lambda(x, .variable(t)).substituting(x, with: .variable(r)),
             Term.lambda(x, .variable(t))
-        ) == true)
-        XCTAssert(Term.unreducedEquals(
+        ) ?? false)
+        XCTAssert(Term.structurallyEqual(
             Term.lambda(x, .variable(x)).substituting(y, with: .variable(y)),
             Term.lambda(x, .variable(x))
-        ) == true)
-        XCTAssert(Term.unreducedEquals(
+        ) ?? false)
+        XCTAssert(Term.structurallyEqual(
             Term.application(.lambda(x, .variable(y)), .variable(x)).substituting(x, with: .variable(y)),
             Term.application(.lambda(x, .variable(y)), .variable(y))
-        ) == true)
-        XCTAssert(Term.unreducedEquals(
+        ) ?? false)
+        XCTAssert(Term.structurallyEqual(
             Term.lambda(x, .variable(y)).substituting(y, with: .variable(x)),
             Term.lambda(x, .variable(x))
         ) == false)
     }
     
     func testEquality() {
-        let t0 = Lambda { a in
-            Lambda { b in
-                a
-            }
-        }
-        
-        print(t0.description)
-        print((true as Lambda).description)
-        XCTAssert(true == t0)
-        XCTAssert(true != false as Lambda)
+        XCTAssert(Term.structurallyEqual(
+            true,
+            lambda { a in lambda { b in a } }
+        ) ?? false)
+        XCTAssert(Term.structurallyEqual(
+            true,
+            false
+        ) == false)
     }
     
     func testTrueFalse() {
-        XCTAssertEqual(0, try! (true as Term)[impureValue: 0][impureValue: 1].constantValue() as! Int)
-        XCTAssertEqual(1, try! (false as Term)[impureValue: 0][impureValue: 1].constantValue() as! Int)
+        XCTAssertEqual(0, try! (true as Term).applying(0).applying(1).evaluated())
+        XCTAssertEqual(1, try! (false as Term).applying(0).applying(1).evaluated())
     }
     
     func testNot() {
-        print(not[false].reduced())
-        XCTAssert(true == not[false])
-        XCTAssert(not[true] == false)
+        XCTAssert((true == not[false]) ?? false)
+        XCTAssert((not[true] == false) ?? false)
     }
-    
+
     func testAndOr() {
-        let x = Lambda { a in
-            Lambda { b in
+        let x = lambda { a in
+            lambda { b in
                 not[or[a][b]]
             }
         }
-        let y = Lambda { a in
-            Lambda { b in
+        let y = lambda { a in
+            lambda { b in
                 and[not[a]][not[b]]
             }
         }
-//        print(x)
-//        print(x.reduced())
-//        print(x[true][true])
-        print(x[true][true].reduced())
-        XCTAssert(x[true][true] == y[true][true])
-        XCTAssert(x[true][false] == y[true][false])
-        XCTAssert(x[false][true] == y[false][true])
-        XCTAssert(x[false][false] == y[false][false])
+        XCTAssert((x[true][true] == y[true][true]) ?? false)
+        XCTAssert((x[true][false] == y[true][false]) ?? false)
+        XCTAssert((x[false][true] == y[false][true]) ?? false)
+        XCTAssert((x[false][false] == y[false][false]) ?? false)
     }
-    
-//    λa.λb.(λc.c(λd.λe.e)(λf.λg.f))((λh.λi.h h i)a b)
 
-//        
-    func testIfThenEles() {
-        for a in [true, false] {
-            for b in [true, false] {
-                for c in [true, false] {
-                    XCTAssert(ifThenElse[a ? true : false][b ? true : false][c ? true : false] == ((a ? b : c) ? true : false))
-                }
-            }
+    func testIfThenElse() {
+        let (a, b) = (Term.variable(Binding()), Term.variable(Binding()))
+        for condition in [true, false] {
+            XCTAssert((ifThenElse[condition ? true : false][a][b] == (condition ? a : b)) ?? false)
         }
     }
-    
-    
+
     func testNumerals() {
         for i in 0...10 {
-            XCTAssertEqual(i, try! Term(integerLiteral: i).integerValue())
+            XCTAssertEqual(i, Int(churchEncoded: Term(churchEncoding: i)))
         }
     }
     
     func testPairs() {
         let p = pair[3][2]
-        XCTAssert(3 == first[p])
-        XCTAssert(2 == second[p])
+        XCTAssert((3 == first[p]) ?? false)
+        XCTAssert((2 == second[p]) ?? false)
     }
-    
-    func testMath() {
+
+    func testSucc() {
         for x in (1...5) {
             for y in (1...5) {
-                let n = Lambda(integerLiteral: x)
-                let m = Lambda(integerLiteral: x + y)
-                
-                var z = n
-                for _ in 0..<y {
-                    z = succ[z]
-                }
-                
-                let zz = z.reduced()
-                let mm = m.reduced()
-                XCTAssert(Term.unreducedEquals(zz, mm) == true)
+                let a = Term(churchEncoding: x + y)
+                let b = (0..<y).reduce(Term(churchEncoding: x), combine: { term, _ in succ[term] })
+
+                XCTAssert((a == b) ?? false)
             }
         }
     }
-    
+
     func testOptional() {
         let a = some[Term(integerLiteral: 5)]
-        XCTAssert(isSome[a] == true)
-        XCTAssert(unwrap[a] == Term(integerLiteral: 5))
+        XCTAssert(Bool(churchEncoded: isSome[a]) ?? false)
+        XCTAssert((unwrap[a] == 5) ?? false)
         let b = mapSome[succ][a]
-        XCTAssert(isSome[b] == true)
-        XCTAssert(unwrap[b] == Term(integerLiteral: 6))
+        XCTAssert(Bool(churchEncoded: isSome[b]) ?? false)
+        XCTAssert((unwrap[b] == 6) ?? false)
     }
     
-//    func testList() {
-//        let range = 0...3
-//        var list = none
-//        XCTAssert(false == isSome[list])
-//        for i in range {
-//            list = cons[Term(integerLiteral: i)][list] // -> [3, 2, 1, 0]
-//            XCTAssert(true == isSome[list])
-//            print(list)
-//        }
-//        for i in range.reverse() {
-//            // TODO: Make everythign impure...
-//            let impureList = list.mapVariables(ImpureVariable.init)
-//            let x = try! unwrap.mapVariables(ImpureVariable.init)[head.mapVariables(ImpureVariable.init)[impureList]].integerValue()
-//            print(x)
-//            XCTAssert(true == isSome[list])
-//            XCTAssert(Term(integerLiteral: i) == unwrap[head[list]])
-//            list = tail[list]
-//            print(list)
-//        }
-//        XCTAssert(false == isSome[list])
-//    }
+    func testList() {
+        let range = 0...3
+        var list = none
+        XCTAssert(!(Bool(churchEncoded: isSome[list]) ?? false))
+        for i in range {
+            let oldList = list
+            let n = Term(churchEncoding: i)
+            list = cons[n][list] // -> [3, 2, 1, 0]
+            XCTAssert(Bool(churchEncoded: isSome[list]) ?? false)
+            XCTAssert((n == first[unwrap[list]]) ?? false)
+            XCTAssert((n == unwrap[head[list]]) ?? false)
+            XCTAssert((oldList == second[unwrap[list]]) ?? false)
+            XCTAssert((oldList == tail[list]) ?? false)
+        }
+//        list = mapList[succ][list]
+//        let range2 = 1...4
+        for i in range.reverse() {
+            guard Bool(churchEncoded: isSome[list]) ?? false else { fatalError() }
+            XCTAssert(Bool(churchEncoded: isSome[list]) ?? false)
+            XCTAssertEqual(i, Int(churchEncoded: unwrap[head[list]]))
+            print(Int(churchEncoded: unwrap[head[list]]))
+            list = tail[list]
+        }
+        XCTAssert(!(Bool(churchEncoded: isSome[list]) ?? false))
+    }
 }
+

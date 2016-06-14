@@ -6,8 +6,9 @@
 //  Copyright © 2015 Jaden Geller. All rights reserved.
 //
 
-// TODO: Make this type hide Term and automatically reduce stuff.
-public typealias Lambda = Term
+public func lambda(body: Term -> Term) -> Term {
+    return Term(lambdaBody: body)
+}
 
 /// A lambda calculus term.
 public enum Term {
@@ -25,7 +26,18 @@ public enum Term {
 }
 
 extension Term {
-    public static var freeVariable: Term {
+    public init(lambdaBody: Term -> Term) {
+        let argument = Binding()
+        self = .lambda(argument, lambdaBody(.variable(argument)))
+    }
+    
+    public subscript(argument: Term) -> Term {
+        return .application(self, argument)
+    }
+}
+
+extension Term {
+    public static func freeVariable() -> Term {
         return .variable(Binding())
     }
     
@@ -52,14 +64,6 @@ extension Term {
             return term
         case let .lambda(argument, body) where argument != binding && argument.isFresh(in: term):
             return .lambda(argument, body.substituting(binding, with: term))
-
-//            if  {
-//                return .lambda(argument, body.substituting(binding, with: term))
-//            } else {
-//                let freshArgument = Binding()
-//                let freshBody = body.substituting(argument, with: .variable(Variable(freshArgument)))
-//                return .lambda(argument, freshBody.substituting(binding, with: term))
-//            }
         case let .application(lhs, rhs):
             return .application(
                 lhs.substituting(binding, with: term),
@@ -71,7 +75,7 @@ extension Term {
     }
     
     /// Replaces all occurances of the variable `identifier` with `term`.
-    mutating func substitute(binding: Binding, with term: Term) {
+    public mutating func substitute(binding: Binding, with term: Term) {
         self = substituting(binding, with: term)
     }
 }
@@ -79,16 +83,17 @@ extension Term {
 import Foundation
 extension Term {
     /// Returns the result of performing beta-reduction on function application terms.
-    @warn_unused_result public func reduced() -> Term {
+    /// If `weakly` reduced, a lambda body will not be reduced.
+    @warn_unused_result public func reduced(weakly weakly: Bool = false) -> Term {
         switch self {
         case .variable, .constant:
             return self
         case let .lambda(argument, body):
-            return .lambda(argument, body.reduced())
+            return .lambda(argument, weakly ? body : body.reduced(weakly: false))
         case let .application(lambda, value):
-            let (lambda, value) = (lambda.reduced(), value.reduced())
+            let (lambda, value) = (lambda.reduced(weakly: false), value.reduced(weakly: weakly))
             if case .lambda(let argument, let body) = lambda {
-                return body.substituting(argument, with: value).reduced()
+                return body.substituting(argument, with: value).reduced(weakly: weakly)
             } else {
                 return .application(lambda, value)
             }
@@ -96,76 +101,9 @@ extension Term {
     }
     
     /// Performs beta-reduction on function application terms.
-    public mutating func reduce() {
-        self = reduced()
-    }
-}
-
-extension Term {
-    public init(body: Term -> Term) {
-        let argument = Binding()
-        self = .lambda(argument, body(.variable(argument)))
-    }
-    
-    public subscript(argument: Term) -> Term {
-        return .application(self, argument)
-    }
-}
-
-extension Term: CustomStringConvertible, CustomDebugStringConvertible {
-    public var description: String {
-        var names: [Binding : String] = [:]
-        return prettyDescription(reduced: true, names: &names)
-    }
-    
-    public var debugDescription: String {
-        return description(withNames: { String($0) }, reduced: false)
-    }
-    
-    public func prettyDescription(reduced reduced: Bool, inout names: [Binding : String]) -> String {
-        var identifierGenerator = LexiographicGenerator()
-        return description(withNames: { binding in
-            if let name = names[binding] {
-                return name
-            } else {
-                let name = identifierGenerator.next()!
-                names[binding] = name
-                return name
-            }
-        }, reduced: reduced)
-    }
-    
-    private var isTightlyBound: Bool {
-        switch self {
-        case .variable, .constant:
-            return true
-        case .application, .lambda:
-            return false
-        }
-    }
-    
-    public func description(withNames name: (Binding -> String), reduced: Bool = true) -> String {
-        switch reduced ? self.reduced() : self {
-        case .constant(let value):
-            return String(value)
-        case .variable(let binding):
-            return name(binding)
-        case .lambda(let argument, let body):
-            return "λ" + name(argument) + "." + body.description(withNames: name)
-        case .application(let lhs, let rhs):
-            switch (lhs, rhs) {
-            case (.variable, let r) where r.isTightlyBound:
-                return lhs.description(withNames: name) + " " + rhs.description(withNames: name)
-            case (.application, let r) where r.isTightlyBound:
-                return lhs.description(withNames: name) + " " + rhs.description(withNames: name)
-            case (.variable, _), (.application, _):
-                return lhs.description(withNames: name) + "(" + rhs.description(withNames: name) + ")"
-            case (.lambda, .variable):
-                return "(" + lhs.description(withNames: name) + ")" + rhs.description(withNames: name)
-            default:
-                return "(" + lhs.description(withNames: name) + ")(" + rhs.description(withNames: name) + ")"
-            }
-        }
+    /// If `weakly` reduced, a lambda body will not be reduced.
+    public mutating func reduce(weakly weakly: Bool = false) {
+        self = reduced(weakly: weakly)
     }
 }
 
@@ -173,8 +111,8 @@ extension Term {
     /// Returns `true` if `lhs` and `rhs` are structurally equal without doing any reduction, `false` otherwise.
     /// If a constant term is compared, will return `nil` to indicate comparison failed. (As a limitation of Swift,
     /// it is not possible to check if two `Any` values are equal.)
-    // SWIFT: Once Equatable can be used as an existential in some way, update this.
-    public static func unreducedEquals(lhs: Term, _ rhs: Term, withContext context: [Binding : Binding] = [:]) -> Bool? {
+    // TODO: Once Equatable can be used as an existential in some way, update this and don't return an optional.
+    public static func structurallyEqual(lhs: Term, _ rhs: Term, withContext context: [Binding : Binding] = [:]) -> Bool? {
         switch (lhs, rhs) {
         case (.constant, .constant):
             return nil
@@ -183,11 +121,11 @@ extension Term {
         case (.lambda(let leftArgument, let leftBody), .lambda(let rightArgument, let rightBody)):
             var contextCopy = context
             contextCopy[leftArgument] = rightArgument
-            return unreducedEquals(leftBody, rightBody, withContext: contextCopy)
+            return structurallyEqual(leftBody, rightBody, withContext: contextCopy)
         case (.application(let leftLhs, let leftRhs), .application(let rightLhs, let rightRhs)):
-            guard let leftEqual = unreducedEquals(leftLhs, rightLhs, withContext: context) else { return nil }
+            guard let leftEqual = structurallyEqual(leftLhs, rightLhs, withContext: context) else { return nil }
             guard leftEqual == true else { return false }
-            guard let rightEqual = unreducedEquals(leftRhs, rightRhs, withContext: context) else { return nil }
+            guard let rightEqual = structurallyEqual(leftRhs, rightRhs, withContext: context) else { return nil }
             guard rightEqual == true else { return false }
             return true
         default:
@@ -196,65 +134,7 @@ extension Term {
     }
 }
 
-// TODO: Remove this shit and add on `Lambda`
-// More specially, make it less magical
-//extension PureTerm: Equatable { }
-public func ==(lhs: Term, rhs: Term) -> Bool {
-    guard let isEqual = Term.unreducedEquals(lhs.reduced(), rhs.reduced()) else {
-        fatalError("Checking equality between terms with constant values is undefined.")
-    }
-    return isEqual
-}
-public func !=(lhs: Term, rhs: Term) -> Bool {
-    return !(lhs == rhs)
-}
-
-public enum EvaluationError: ErrorType, CustomStringConvertible {
-    case lambdaResult(Term)
-    case boundResult(Binding)
-    case expectedConstantFunction(Any)
-    
-    public var description: String {
-        switch self {
-        case .lambdaResult(let lambda):
-            return "The result of the evaluation was unexpectedly a lambda: \(lambda)"
-        case .boundResult(let binding):
-            return "The result of the evaluation was unexpectedly an bound variable: \(binding)"
-        case .expectedConstantFunction(let term):
-            return "Expected constant function on left hand side of application, but found: \(term)"
-        }
-    }
-}
-
-extension Term {
-    // TODO: Remove this shit and add on `Lambda`
-    // TODO: Rename `evaluateConstant`
-    public func constantValue() throws -> Any {
-        switch self.reduced() {
-        case .constant(let value):
-            return value
-        case .variable(let binding):
-            throw EvaluationError.boundResult(binding)
-        case .lambda:
-            throw EvaluationError.lambdaResult(self)
-
-        case .application(let lhs, let rhs):
-            let (lhsValue, rhsValue) = (try lhs.constantValue(), try rhs.constantValue())
-
-            guard let lhsFunction = lhsValue as? Any -> Any else {
-                throw EvaluationError.expectedConstantFunction(lhs)
-            }
-            return lhsFunction(rhsValue)
-        }
-    }
-    
-    // TODO: Remove this shit and add on `Lambda`
-    public subscript(impureValue value: Any) -> Term {
-        return self[.constant(value)]
-    }
-    
-    public subscript(impureFunction function: Any -> Any) -> Term {
-        return self[.constant(function)]
-    }
+public func ==(lhs: Term, rhs: Term) -> Bool? {
+    return Term.structurallyEqual(lhs.reduced(), rhs.reduced())
 }
 
