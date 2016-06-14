@@ -7,15 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D68E7631D0FDA0F00836863 /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D68E7621D0FDA0F00836863 /* Binding.swift */; };
+		4D68E7671D0FDA1700836863 /* Term+Church.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D68E7641D0FDA1700836863 /* Term+Church.swift */; };
+		4D68E7681D0FDA1700836863 /* Term+Identification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D68E7651D0FDA1700836863 /* Term+Identification.swift */; };
+		4D68E7691D0FDA1700836863 /* Term+Lossless.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D68E7661D0FDA1700836863 /* Term+Lossless.swift */; };
 		4D8DAEA81C3A336A00B212EC /* Term.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D8DAEA41C3A336A00B212EC /* Term.swift */; };
 		4DC2D4EB1CF2BC1800F7637E /* Term+Evaluation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC2D4EA1CF2BC1800F7637E /* Term+Evaluation.swift */; };
-		4DCB9AEF1D0E441A00F2BE81 /* Term+Church.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DCB9AEE1D0E441A00F2BE81 /* Term+Church.swift */; };
-		4DCB9AF11D0E5B1900F2BE81 /* Term+Lossless.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DCB9AF01D0E5B1900F2BE81 /* Term+Lossless.swift */; };
 		4DD54FEF1CA9F5EA00C50946 /* Calcula.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D6B17781C27F151006F8427 /* Calcula.framework */; };
 		4DD54FF51CA9F5F800C50946 /* LambdaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D6B17871C27F151006F8427 /* LambdaTests.swift */; };
 		4DD54FF61CA9F5F800C50946 /* TermTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DD54FD11CA9EAC700C50946 /* TermTests.swift */; };
-		4DEA72781CF19B6800F45A56 /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DEA72771CF19B6800F45A56 /* Binding.swift */; };
-		4DEA72831CF22F8200F45A56 /* Term+Identification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DEA72821CF22F8200F45A56 /* Term+Identification.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,18 +29,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4D68E7621D0FDA0F00836863 /* Binding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Binding.swift; path = ../../Sources/Binding.swift; sourceTree = "<group>"; };
+		4D68E7641D0FDA1700836863 /* Term+Church.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Term+Church.swift"; path = "../../Sources/Term+Church.swift"; sourceTree = "<group>"; };
+		4D68E7651D0FDA1700836863 /* Term+Identification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Term+Identification.swift"; path = "../../Sources/Term+Identification.swift"; sourceTree = "<group>"; };
+		4D68E7661D0FDA1700836863 /* Term+Lossless.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Term+Lossless.swift"; path = "../../Sources/Term+Lossless.swift"; sourceTree = "<group>"; };
 		4D6B17781C27F151006F8427 /* Calcula.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Calcula.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D6B177D1C27F151006F8427 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4D6B17871C27F151006F8427 /* LambdaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LambdaTests.swift; sourceTree = "<group>"; };
 		4D8DAEA41C3A336A00B212EC /* Term.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Term.swift; path = ../../Sources/Term.swift; sourceTree = "<group>"; };
 		4DC2D4EA1CF2BC1800F7637E /* Term+Evaluation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Term+Evaluation.swift"; path = "../../Sources/Term+Evaluation.swift"; sourceTree = "<group>"; };
-		4DCB9AEE1D0E441A00F2BE81 /* Term+Church.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Term+Church.swift"; sourceTree = "<group>"; };
-		4DCB9AF01D0E5B1900F2BE81 /* Term+Lossless.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Term+Lossless.swift"; sourceTree = "<group>"; };
 		4DD54FD11CA9EAC700C50946 /* TermTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TermTests.swift; sourceTree = "<group>"; };
 		4DD54FEA1CA9F5EA00C50946 /* CalculaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CalculaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DD54FEE1CA9F5EA00C50946 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4DEA72771CF19B6800F45A56 /* Binding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Binding.swift; sourceTree = "<group>"; };
-		4DEA72821CF22F8200F45A56 /* Term+Identification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Term+Identification.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,12 +83,12 @@
 		4D6B177A1C27F151006F8427 /* Calcula */ = {
 			isa = PBXGroup;
 			children = (
-				4DEA72771CF19B6800F45A56 /* Binding.swift */,
+				4D68E7621D0FDA0F00836863 /* Binding.swift */,
 				4D8DAEA41C3A336A00B212EC /* Term.swift */,
 				4DC2D4EA1CF2BC1800F7637E /* Term+Evaluation.swift */,
-				4DEA72821CF22F8200F45A56 /* Term+Identification.swift */,
-				4DCB9AF01D0E5B1900F2BE81 /* Term+Lossless.swift */,
-				4DCB9AEE1D0E441A00F2BE81 /* Term+Church.swift */,
+				4D68E7641D0FDA1700836863 /* Term+Church.swift */,
+				4D68E7651D0FDA1700836863 /* Term+Identification.swift */,
+				4D68E7661D0FDA1700836863 /* Term+Lossless.swift */,
 				4D6B177D1C27F151006F8427 /* Info.plist */,
 			);
 			path = Calcula;
@@ -211,12 +211,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4DEA72781CF19B6800F45A56 /* Binding.swift in Sources */,
+				4D68E7691D0FDA1700836863 /* Term+Lossless.swift in Sources */,
 				4D8DAEA81C3A336A00B212EC /* Term.swift in Sources */,
 				4DC2D4EB1CF2BC1800F7637E /* Term+Evaluation.swift in Sources */,
-				4DEA72831CF22F8200F45A56 /* Term+Identification.swift in Sources */,
-				4DCB9AEF1D0E441A00F2BE81 /* Term+Church.swift in Sources */,
-				4DCB9AF11D0E5B1900F2BE81 /* Term+Lossless.swift in Sources */,
+				4D68E7631D0FDA0F00836863 /* Binding.swift in Sources */,
+				4D68E7671D0FDA1700836863 /* Term+Church.swift in Sources */,
+				4D68E7681D0FDA1700836863 /* Term+Identification.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
