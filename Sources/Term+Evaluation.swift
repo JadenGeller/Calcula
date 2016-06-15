@@ -7,25 +7,21 @@
 //
 
 public enum EvaluationError: ErrorType, CustomStringConvertible {
-    case lambdaResult(Term)
-    case boundResult(Binding)
-    case expectedConstantFunction(Any)
-    case dynamicCastFailure(Any, Any.Type)
-    case dynamicCastArgumentFailure // TODO
+    public enum Purpose: String {
+        case function
+        case argument
+        case result
+    }
+    case expectedConstant(found: Term)
+    case dynamicCastFailure(purpose: Purpose, value: Any, targetType: Any.Type)
     
     // TODO: These are bad errors
     public var description: String {
         switch self {
-        case .lambdaResult(let lambda):
-            return "The result of the evaluation was unexpectedly a lambda: `\(lambda)`"
-        case .boundResult(let binding):
-            return "The result of the evaluation was unexpectedly a bound variable: `\(binding)`"
-        case .expectedConstantFunction(let term):
-            return "Expected constant function on left hand side of application, but found `\(term)`"
-        case .dynamicCastFailure(let value, let type):
-            return "Unable to cast `\(value)` from type `\(value.dynamicType)` to type `\(type)`)"
-        case .dynamicCastArgumentFailure:
-            return "Dynamic cast argument failure"
+        case .expectedConstant(let found):
+            return "The result of the evaluation was unexpectedly: `\(found)`"
+        case .dynamicCastFailure(let purpose, let value, let targetType):
+            return "Unable to cast `\(value)` from type `\(value.dynamicType)` to type `\(targetType)` for use as constant \(purpose)"
         }
     }
 }
@@ -36,21 +32,19 @@ extension Term {
         switch term {
         case .constant(let untypedValue):
             guard let value = untypedValue as? V else {
-                throw EvaluationError.dynamicCastFailure(untypedValue, V.self)
+                throw EvaluationError.dynamicCastFailure(purpose: .argument, value: untypedValue, targetType: V.self)
             }
             return value
-        case .variable(let binding):
-            throw EvaluationError.boundResult(binding)
-        case .lambda:
-            throw EvaluationError.lambdaResult(term)
-            
         case .application(let lhs, let rhs):
             let (untypedFunction, argument): (Any, Any) = (try lhs.evaluated(), try rhs.evaluated())
             
-            guard let function = untypedFunction as? Any throws -> Any else {
-                throw EvaluationError.expectedConstantFunction(untypedFunction)
+            typealias AnyFunction = Any throws -> Any
+            guard let function = untypedFunction as? AnyFunction else {
+                throw EvaluationError.dynamicCastFailure(purpose: .function, value: untypedFunction, targetType: AnyFunction.self)
             }
             return try Term.constant(function(argument)).evaluated()
+        case .variable, .lambda:
+            throw EvaluationError.expectedConstant(found: term)
         }
     }
 }
@@ -81,7 +75,7 @@ extension Term {
     @warn_unused_result public func applying<T, V>(function: (T -> V), lazily: Bool = false) -> Term {
         return applying({ (untypedArgument: Any) throws -> Any in
             guard let argument = untypedArgument as? T else {
-                throw EvaluationError.dynamicCastArgumentFailure
+                throw EvaluationError.dynamicCastFailure(purpose: .result, value: untypedArgument, targetType: T.self)
             }
             return function(argument)
         }, lazily: lazily)
