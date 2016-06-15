@@ -8,7 +8,7 @@
 
 // TODO: Put in submodule once Swift supports this.
 
-// MAKR: Church Numeral
+// MARK: Church Numeral
 
 extension Term: IntegerLiteralConvertible {
     public init(churchEncoding value: Int) {
