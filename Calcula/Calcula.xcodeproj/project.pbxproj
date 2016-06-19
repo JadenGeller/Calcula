@@ -11,6 +11,7 @@
 		4D68E7671D0FDA1700836863 /* Term+Church.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D68E7641D0FDA1700836863 /* Term+Church.swift */; };
 		4D68E7681D0FDA1700836863 /* Term+Identification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D68E7651D0FDA1700836863 /* Term+Identification.swift */; };
 		4D68E7691D0FDA1700836863 /* Term+Lossless.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D68E7661D0FDA1700836863 /* Term+Lossless.swift */; };
+		4D6967ED1D1659C300730630 /* Term+Reduction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D6967EC1D1659C300730630 /* Term+Reduction.swift */; };
 		4D8DAEA81C3A336A00B212EC /* Term.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D8DAEA41C3A336A00B212EC /* Term.swift */; };
 		4DC2D4EB1CF2BC1800F7637E /* Term+Evaluation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC2D4EA1CF2BC1800F7637E /* Term+Evaluation.swift */; };
 		4DD54FEF1CA9F5EA00C50946 /* Calcula.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D6B17781C27F151006F8427 /* Calcula.framework */; };
@@ -33,6 +34,7 @@
 		4D68E7641D0FDA1700836863 /* Term+Church.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Term+Church.swift"; path = "../../Sources/Term+Church.swift"; sourceTree = "<group>"; };
 		4D68E7651D0FDA1700836863 /* Term+Identification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Term+Identification.swift"; path = "../../Sources/Term+Identification.swift"; sourceTree = "<group>"; };
 		4D68E7661D0FDA1700836863 /* Term+Lossless.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Term+Lossless.swift"; path = "../../Sources/Term+Lossless.swift"; sourceTree = "<group>"; };
+		4D6967EC1D1659C300730630 /* Term+Reduction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Term+Reduction.swift"; path = "../../Sources/Term+Reduction.swift"; sourceTree = "<group>"; };
 		4D6B17781C27F151006F8427 /* Calcula.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Calcula.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D6B177D1C27F151006F8427 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4D6B17871C27F151006F8427 /* LambdaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LambdaTests.swift; sourceTree = "<group>"; };
@@ -86,6 +88,7 @@
 				4D68E7621D0FDA0F00836863 /* Binding.swift */,
 				4D8DAEA41C3A336A00B212EC /* Term.swift */,
 				4DC2D4EA1CF2BC1800F7637E /* Term+Evaluation.swift */,
+				4D6967EC1D1659C300730630 /* Term+Reduction.swift */,
 				4D68E7641D0FDA1700836863 /* Term+Church.swift */,
 				4D68E7651D0FDA1700836863 /* Term+Identification.swift */,
 				4D68E7661D0FDA1700836863 /* Term+Lossless.swift */,
@@ -213,6 +216,7 @@
 			files = (
 				4D68E7691D0FDA1700836863 /* Term+Lossless.swift in Sources */,
 				4D8DAEA81C3A336A00B212EC /* Term.swift in Sources */,
+				4D6967ED1D1659C300730630 /* Term+Reduction.swift in Sources */,
 				4DC2D4EB1CF2BC1800F7637E /* Term+Evaluation.swift in Sources */,
 				4D68E7631D0FDA0F00836863 /* Binding.swift in Sources */,
 				4D68E7671D0FDA1700836863 /* Term+Church.swift in Sources */,
